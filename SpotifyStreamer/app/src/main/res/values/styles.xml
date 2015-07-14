@@ -1,0 +1,61 @@
+<resources>
+
+    <!--&lt;!&ndash; Base application theme. &ndash;&gt;-->
+    <!--<style name="AppTheme" parent="@android:style/Theme.Material">-->
+    <!--&lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+    <!--</style>-->
+    <style name="AppTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="colorPrimary">#3f51b5</item>
+        <item name="colorPrimaryDark">#303f9f</item>
+    </style>
+
+    <style name="searchview_style">
+        <item name="android:layout_margin">@dimen/default_margin</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:queryHint">@string/query_hint</item>
+        <item name="android:inputType">text</item>
+        <item name="android:iconifiedByDefault">false</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="listview_style">
+        <item name="android:layout_margin">@dimen/default_margin</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="list_item">
+        <item name="android:layout_margin">@dimen/default_margin</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?android:attr/listPreferredItemHeight</item>
+    </style>
+
+    <style name="imageview_style">
+        <item name="android:layout_margin">@dimen/default_margin</item>
+        <item name="android:layout_width">?android:attr/listPreferredItemHeight</item>
+        <item name="android:layout_height">?android:attr/listPreferredItemHeight</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="name_textview">
+        <item name="android:paddingLeft">@dimen/default_padding</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:minHeight">?android:attr/listPreferredItemHeight</item>
+    </style>
+
+    <style name="name_textview.song_name">
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="name_textview.song_name.album_name">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+</resources>
