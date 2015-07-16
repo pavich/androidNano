@@ -1,11 +1,13 @@
 package pavich.com.spotifystreamer;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +26,7 @@ import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.Tracks;
+import retrofit.RetrofitError;
 
 
 /**
@@ -93,36 +98,68 @@ public class TopFragment extends Fragment {
                 return null;
             }
 
-
-            SpotifyApi api = new SpotifyApi();
-            SpotifyService spotify = api.getService();
-            Map<String, Object> options = new HashMap<String, Object>();
-            options.put(SpotifyService.COUNTRY, "EC");
-            Tracks results = spotify.getArtistTopTrack(params[0], options);
-            List<TrackItem> trackItems = new ArrayList<>();
-            for (Track track : results.tracks) {
-                String trackName = track.name;
-                String albumName = null;
-                Uri albumArtThumbnailLarge = null;
-                Uri albumArtThumbnailSmall = null;
-                Uri previewUrl = null;
-                if (track.album != null) {
-                    albumName = track.album.name;
-                    if (track.album.images != null && track.album.images.size() > 0) {
-                        albumArtThumbnailLarge = Uri.parse(track.album.images.get(0).url).buildUpon().build();
-                        if (track.album.images.size() > 2) {
-                            albumArtThumbnailSmall = Uri.parse(track.album.images.get(2).url).buildUpon().build();
-                        } else {
-                            albumArtThumbnailSmall = albumArtThumbnailLarge;
+            try {
+                SpotifyApi api = new SpotifyApi();
+                SpotifyService spotify = api.getService();
+                Map<String, Object> options = new HashMap<String, Object>();
+                options.put(SpotifyService.COUNTRY, "EC");
+                Tracks results = spotify.getArtistTopTrack(params[0], options);
+                List<TrackItem> trackItems = new ArrayList<>();
+                for (Track track : results.tracks) {
+                    String trackName = track.name;
+                    String albumName = null;
+                    Uri albumArtThumbnailLarge = null;
+                    Uri albumArtThumbnailSmall = null;
+                    Uri previewUrl = null;
+                    if (track.album != null) {
+                        albumName = track.album.name;
+                        if (track.album.images != null && track.album.images.size() > 0) {
+                            albumArtThumbnailLarge = Uri.parse(track.album.images.get(0).url).buildUpon().build();
+                            if (track.album.images.size() > 2) {
+                                albumArtThumbnailSmall = Uri.parse(track.album.images.get(2).url).buildUpon().build();
+                            } else {
+                                albumArtThumbnailSmall = albumArtThumbnailLarge;
+                            }
                         }
+                    }
+
+                    previewUrl = Uri.parse(track.preview_url).buildUpon().build();
+                    TrackItem trackItem = new TrackItem(trackName, albumName, albumArtThumbnailLarge, albumArtThumbnailSmall, previewUrl);
+                    trackItems.add(trackItem);
+                }
+                return trackItems;
+            } catch (RetrofitError ex) {
+                /*
+                System.out.println(ex.getResponse().getStatus());
+                Log.e()*/
+                String msg = "";
+                String tipo="";
+                if (ex.getResponse() != null) {
+                    if (ex.getResponse().getStatus() > 500) {
+                        msg = "Network error HTTP ("
+                                + ex.getResponse().getStatus() + ")";
+                        if (ex.getMessage() != null
+                                && !ex.getMessage().isEmpty()) {
+                            msg += ": " + ex.getMessage();
+                        }
+                        tipo="Network";
+                    } else if (ex.getBody() == null) {
+                        msg = ex.getMessage();
+                        tipo="Nothing";
+                    } else if (ex.getCause() instanceof ConnectException) {
+                        msg = ex.getMessage();
+                        tipo="Connection";
+
+                    } else if (ex.getCause() instanceof SocketTimeoutException) {
+                        msg = ex.getMessage();
+                        tipo="Time Out";
                     }
                 }
 
-                previewUrl = Uri.parse(track.preview_url).buildUpon().build();
-                TrackItem trackItem = new TrackItem(trackName, albumName, albumArtThumbnailLarge, albumArtThumbnailSmall, previewUrl);
-                trackItems.add(trackItem);
+                Log.e(msg,tipo);
+                return null;
             }
-            return trackItems;
+
         }
 
         @Override

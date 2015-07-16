@@ -33,7 +33,7 @@ public class ListViewAdapter extends ArrayAdapter<RowItem> {
 
         RowItem rowItem = getItem(position);
 
-        convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
+        if(convertView == null) convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
 
         ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
         TextView name = (TextView) convertView.findViewById(R.id.name);
